@@ -1,0 +1,50 @@
+---
+- name: Setting root password for MySQL
+  mysql_user: 
+    name: root 
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    state: present
+  with_items:
+    - "%"
+    - localhost
+
+- name: Adding configuration file for MySQL
+  template: 
+    src: my.cnf.j2 
+    dest: /root/.my.cnf 
+    owner: root 
+    group: root 
+    mode: 0600
+
+- name: Reload privilege tables
+  command: >
+    mysql -e "{{ item }}"
+  with_items:
+    - FLUSH PRIVILEGES
+
+- name: Remove anonymous users
+  command: >
+    mysql -ne "{{ item }}"
+  with_items:
+    - DELETE FROM mysql.user WHERE User=''
+
+- name: Reload privilege tables
+  command: >
+    mysql -ne "{{ item }}"
+  with_items:
+    - FLUSH PRIVILEGES
+
+- name: Restarting mysql
+  service: 
+    name: mysql 
+    state: restarted
+  when:
+    ansible_os_family == "Debian"
+
+- name: Restarting mysql
+  service: 
+    name: mysqld 
+    state: restarted
+  when:
+    ansible_os_family == "RedHat"

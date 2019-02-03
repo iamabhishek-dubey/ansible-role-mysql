@@ -1,0 +1,27 @@
+---
+- name: Installing repo for MySQL
+  yum: name=/opt/mysql-community-release-el6-5.noarch.rpm state=present
+    name: http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
+    state: present
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 5
+
+- name: Installing MySQL server and its dependencies
+  yum:
+    name: ['mysql', 'mysql-server', 'MySQL-python', 'libselinux-python']
+    state: present
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 5
+
+- name: Starting mysql
+  service: 
+    name: mysqld 
+    state: restarted
+    enabled: yes
+
+- name: Mysql secure installation
+  include_tasks: mysql_secure_installation.yml

@@ -1,0 +1,20 @@
+---
+- name: Installing MySQL and its dependencies
+  apt:
+    name: ['mysql-server', 'python-mysqldb']
+    state: present
+    update_cache: yes
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 5
+  notify: mysql_restart
+
+- name: Starting Mysql service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Mysql Secure Installation
+  include_tasks: mysql_secure_installation.yml 
