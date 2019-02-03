@@ -1,6 +1,6 @@
 ---
 - name: Installing repo for MySQL
-  yum: name=/opt/mysql-community-release-el6-5.noarch.rpm state=present
+  yum:
     name: http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
     state: present
   register: result
