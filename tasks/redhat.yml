@@ -18,8 +18,8 @@
   delay: 5
 
 - name: Starting mysql
-  service: 
-    name: mysqld 
+  service:
+    name: mysqld
     state: restarted
     enabled: yes
 
